@@ -7,7 +7,7 @@ class ServerCreateSchema(BaseModel):
     name: str 
     ip: str = "127.0.0.1"
     port: int = 25565
-    start_cmd: str = "java -jar server.jar"
+    start_cmd: str = "java -jar server.jar nogui"
     stop_cmd: str = "stop"
     restart_cmd: str = "restart"
     eula: bool = True
@@ -44,8 +44,7 @@ class ServerView:
         return await self.server_controller.restart_server(session_key, server_id)
 
     async def delete_server(self, session_key: str, server_id: int):
-        pass
-    
+        return await self.server_controller.delete_server(session_key, server_id)
     
     
     async def get_server_status(self, session_key: str, server_id: int):

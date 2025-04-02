@@ -314,3 +314,34 @@ class ServerController:
             return HTTPException(status_code=500, detail=f"Failed to restart server: {str(e)}")
         
         return HTTPException(status_code=501, detail="Not implemented") 
+    
+    @prisma_connection_boilerplate
+    async def delete_server(self, session_key: str, server_id: int):
+        session = await IsAuth(session_key)()
+
+
+        
+        if not session:
+            return HTTPException(status_code=401, detail="Unauthorized")
+        
+        server = await self.prisma.mcserver.find_unique(where={"id": server_id, "user_id": session.user.id})
+       
+        #make sure server is not running 
+        check_screen = subprocess.run(f"screen -ls | grep {server.name}", shell=True, capture_output=True)
+        if check_screen.returncode == 0:
+            return HTTPException(status_code=400, detail="Server is running stop it first")
+        
+        if not server:
+            return HTTPException(status_code=404, detail="Server not found")
+        
+        #delete server folder
+        shutil.rmtree(f"./servers/{server.name}")
+        
+        #delete server from database
+        await self.prisma.mcserver.delete(where={"id": server_id})
+        
+        
+        return {
+            "status": "deleted",
+            "message": "Server deleted successfully"
+        }
