@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider             = "prisma-client-py"
+  recursive_type_depth = 5
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String
+  name      String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  sessions  Session[]
+  servers   McServer[]
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+} 
+
+model McServer {
+  id        Int      @id @default(autoincrement())
+  user_id   Int
+  name      String 
+  ip        String
+  port      Int 
+  folder    String @unique 
+  start_cmd String
+  stop_cmd  String?
+  restart_cmd String?
+  version String @default("1.21.5")
+  modpack_url String?
+  modpack_version String?
+  modpack_type String?
+  created Boolean @default(false)
+  password    String @default("minecraft")
+  rcon_port   Int    @default(25575)
+  eula      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [user_id], references: [id])
+}
+
