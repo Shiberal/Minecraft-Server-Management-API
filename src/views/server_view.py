@@ -7,6 +7,7 @@ class ServerCreateSchema(BaseModel):
     name: str 
     ip: str = "127.0.0.1"
     port: int = 25565
+    port_rcon: int = 25575
     start_cmd: str = "java -jar server.jar nogui"
     stop_cmd: str = "stop"
     restart_cmd: str = "restart"
@@ -32,7 +33,7 @@ class ServerView:
         
     async def create_server(self, session_key: str, data: dict = Depends(ServerCreateSchema)):
 
-        return await self.server_controller.create_server(session_key, data.name, data.ip, data.port, data.start_cmd, data.stop_cmd, data.restart_cmd, data.eula, data.modpack_url, data.modpack_version, data.modpack_type, data.version)
+        return await self.server_controller.create_server(session_key, data.name, data.ip, data.port, data.start_cmd, data.stop_cmd, data.restart_cmd, data.eula, data.modpack_url, data.modpack_version, data.modpack_type, data.version, data.port_rcon)
 
     async def start_server(self, session_key: str, server_id: int):
         return await self.server_controller.start_server(session_key, server_id)

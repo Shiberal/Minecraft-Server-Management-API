@@ -43,3 +43,4 @@ next-env.d.ts
 /servers/test
 /servers/base/1.21.5
 .env
+/servers/base/modpacks
